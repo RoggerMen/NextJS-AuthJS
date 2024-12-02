@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  // Prisma no maneja bien las FK que es una caracteristica de MySQL
+  // Para eso colocamos el relationMode = "prisma"
+  relationMode = "prisma"
+}
+
+model User {
+  id        String @id @default(cuid())
+  username  String @unique
+  email     String @unique
+  password  String
+}
+
+
+
+
+
