@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 const formSchema = z.object({
   username: z.string().min(1, { message: "Campo Obligatorio" }),
@@ -112,7 +113,8 @@ const AuthForm = ({ mode }: Props) => {
                     </FormItem>
                 )}
                 />
-            )}
+            )
+            }
 
                 <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem>
@@ -147,9 +149,12 @@ const AuthForm = ({ mode }: Props) => {
         </> :
         <>
         <div className='flex justify-center items-center'>
-<button type="submit" className='w-full bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 py-2 px-4 rounded-lg shadow-lg transition-all w-32'>{mode === "register" ? "Registrar" : "Iniciar Sesión"}</button>
+<button type="submit" className='w-full bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 py-2 px-4 rounded-lg shadow-lg transition-all'>{mode === "register" ? "Registrar" : "Iniciar Sesión"}</button>
 </div> 
-        </>}
+
+<GoogleSignInButton>SigIn With Google</GoogleSignInButton>
+        </>
+        }
     </div>
 
 

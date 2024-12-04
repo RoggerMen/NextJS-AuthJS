@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { inter } from "./fonts/fonts";
 import { Toaster } from "react-hot-toast";
+import { NextAuthProvider } from "./providers";
 
 
 export const metadata: Metadata = {
@@ -18,9 +19,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.className} min-h-screen antialiased`} >
+      <NextAuthProvider>
         {children}
         <Toaster />
-
+      </NextAuthProvider>
       </body>
     </html>
   );
