@@ -7,7 +7,10 @@ import prisma from "./lib/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Google,
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+    }),
     Credentials({
       credentials: {
         email: {},
@@ -40,7 +43,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account  }) {
+      // Si el usuario usa Google, registrar en la base de datos si es necesario
+      if (account?.provider === "google" && user) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!existingUser) {
+          // Crea un nuevo usuario con los datos de Google
+          await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name!,
+              image: user.image || null,
+            },
+          });
+        }
+      }
+      
       if (user) {
         token.id = user.id;
         token.email = user.email;
