@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from 'bcryptjs';
 
 export const POST = async (req: NextRequest) => {
     const { username, email, password } = await req.json();
@@ -16,13 +15,12 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json({ error: "El correo ya existe" });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.create({
             data: {
                 username,
                 email,
-                password: hashedPassword,
+                password
             },
         });
 
