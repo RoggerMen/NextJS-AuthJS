@@ -17,7 +17,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className} min-h-screen antialiased`}>
+      {/* min-h-screen antialiased */}
+      <body className={`${inter.className} `}>
         <NextAuthProvider>
           {children}
           <Toaster />

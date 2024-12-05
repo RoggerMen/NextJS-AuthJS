@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* --@ts-ignore */
+
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
 
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -46,8 +47,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, account  }) {
       // Si el usuario usa Google, registrar en la base de datos si es necesario
       if (account?.provider === "google" && user) {
+
+        const email = user.email;
+
+        if (!email) {
+          throw new Error("El email del usuario no está definido.");
+        }
+
         const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
+          where: { email },
         });
 
         if (!existingUser) {
@@ -71,8 +79,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
         session.user.name = token.name;
       }
       return session;
