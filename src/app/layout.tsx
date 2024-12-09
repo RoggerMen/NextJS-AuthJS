@@ -4,6 +4,7 @@ import "./globals.css";
 import { inter } from "./fonts/fonts";
 import { Toaster } from "react-hot-toast";
 import { NextAuthProvider } from "./providers";
+import LayoutSideMenuBar from "./(auth)/_components/Interface/LayoutSideMenuBar/LayoutSideMenuBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,10 +20,12 @@ export default function RootLayout({
     <html lang="es">
       {/* min-h-screen antialiased */}
       <body className={`${inter.className} `}>
-        <NextAuthProvider>
-          {children}
-          <Toaster />
-        </NextAuthProvider>
+      <NextAuthProvider>
+        <LayoutSideMenuBar>
+            {children}
+            <Toaster />        
+        </LayoutSideMenuBar>  
+      </NextAuthProvider>  
       </body>
     </html>
   );

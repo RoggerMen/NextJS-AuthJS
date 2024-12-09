@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { FC, ReactNode } from "react";
-import { FcGoogle } from "react-icons/fc";
+import { FcGoogle } from "react-icons/fc"
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 

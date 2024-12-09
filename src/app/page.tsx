@@ -5,12 +5,22 @@ import { ChevronRight } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import GoogleSignInButton from "./(auth)/_components/AuthForm/GoogleSignInButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Modal from "./(auth)/_components/Interface/UI/modal";
 
 export default function Home() {
   const { data: session } = useSession();
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
-  
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Verificar si ya se mostró el modal en el almacenamiento local
+    if (session && !localStorage.getItem("welcomeModalShown")) {
+      setShowModal(true);
+      localStorage.setItem("welcomeModalShown", "true"); // Marcar el modal como mostrado
+    }
+  }, [session]);
+
   if (session) {
     return (
       <main>
@@ -18,8 +28,7 @@ export default function Home() {
           <p className="">
             Hola, <strong>{session.user?.name}</strong>
           </p>
-          <img src={`${session.user?.image}`} />
-          <Button onClick={() => signOut({ callbackUrl: "/" })}>
+          <Button onClick={() => signOut({ callbackUrl: "/" }).then(()=> localStorage.removeItem("welcomeModalShown"))}>
             Cerrar Sesión
           </Button>
           <Link
@@ -29,6 +38,24 @@ export default function Home() {
             <span>Ir a ruta protegida</span>
             <ChevronRight className="w-4 h-4" />
           </Link>
+          {/* Modal de bienvenida */}
+          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-blue-600 mb-4">
+                ¡Bienvenido, {session?.user?.name}!
+              </h2>
+              <p className="text-gray-700 mb-4">
+                Inicio de sesión exitoso. Estamos emocionados de tenerte de
+                vuelta.
+              </p>
+              <Button
+                onClick={() => setShowModal(false)}
+                className="bg-lime-400 hover:bg-lime-500 text-white transition-colors duration-200"
+              >
+                Comenzar
+              </Button>
+            </div>
+          </Modal>
         </div>
       </main>
     );
