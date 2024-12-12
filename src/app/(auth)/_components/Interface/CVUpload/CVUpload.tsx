@@ -97,7 +97,7 @@ export default function CVUpload() {
           <FormField
             control={form.control}
             name="file"
-            render={({ field: { onChange, value, ...rest } }) => (
+            render={({ field: { onChange, ...rest } }) => (
               <FormItem>
                 <FormLabel>Upload CV</FormLabel>
                 <FormControl>
@@ -106,6 +106,7 @@ export default function CVUpload() {
                     accept=".pdf,.doc,.docx"
                     onChange={(e) => onChange(e.target.files)}
                     {...rest}
+                    value={undefined}
                   />
                 </FormControl>
                 <FormDescription className='text-black-200 dark:text-slate-200'>

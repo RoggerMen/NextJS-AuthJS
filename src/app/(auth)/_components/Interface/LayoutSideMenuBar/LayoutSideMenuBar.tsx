@@ -49,7 +49,9 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
   };
 
   const handleSignOut = () => {
-    signOut({ callbackUrl: "/" });
+    signOut({ callbackUrl: "/" }).then(() => {
+      localStorage.removeItem("welcomeModalShown");
+    });
   };
 
   const NavLinks = () => (

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { toast } from 'react-hot-toast'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -76,8 +76,12 @@ export default function UpdateInfoPage() {
     try {
       await axios.post('/api/update-info', data)
       toast.success('Settings updated successfully')
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Failed to update settings')
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data?.error || 'Failed to update settings');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
     } finally {
       setIsLoading(false)
     }

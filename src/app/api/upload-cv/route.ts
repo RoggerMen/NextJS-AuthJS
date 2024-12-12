@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   try {
     await writeFile(fullPath, buffer);
 
-    const updatedProfile = await prisma.profile.upsert({
+     await prisma.profile.upsert({
       where: { userId: session.user.id },
       update: { cvUrl: relativePath },
       create: { userId: session.user.id, cvUrl: relativePath },

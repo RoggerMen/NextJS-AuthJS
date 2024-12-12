@@ -20,7 +20,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 })
     }
 
-    let updateData: any = {}
+    type UpdateData = {
+      phoneNumber?: string;
+      password?: string;
+    };
+
+    const updateData: UpdateData = {};
 
     if (phoneNumber) {
       updateData.phoneNumber = phoneNumber
@@ -35,7 +40,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: session.user.id },
       data: updateData,
     })

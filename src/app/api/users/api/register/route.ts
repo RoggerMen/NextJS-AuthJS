@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json({ error: "El correo ya existe" });
         }
 
-        const user = await prisma.user.create({
+        await prisma.user.create({
             data: {
                 username,
                 email,
