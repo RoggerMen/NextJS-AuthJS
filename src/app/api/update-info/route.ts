@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await req.json()
-  const { email, phoneNumber, currentPassword, newPassword } = data
+  const { phoneNumber, currentPassword, newPassword } = data
 
   try {
     const user = await prisma.user.findUnique({
@@ -22,20 +22,18 @@ export async function POST(req: NextRequest) {
 
     let updateData: any = {}
 
-    if (email && email !== user.email) {
-      updateData.email = email
-    }
-
     if (phoneNumber) {
       updateData.phoneNumber = phoneNumber
     }
 
-    if (currentPassword && newPassword) {
+    if (session.provider === 'credentials') {
+      if (currentPassword && newPassword) {
         if (currentPassword !== user.password) {
           return NextResponse.json({ error: "La contraseña actual es incorrecta" }, { status: 400 });
         }
         updateData.password = newPassword;
       }
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
@@ -48,4 +46,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No se pudo actualizar la configuración del Usuario" }, { status: 500 })
   }
 }
-

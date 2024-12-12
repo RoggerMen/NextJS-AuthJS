@@ -38,14 +38,14 @@ const GoogleSignInButton: FC<GoogleSignInButtonProps> = ({ children, isLoading, 
       disabled={isLoading}
       className={`flex items-center justify-center gap-1.5 ${
         isLoading
-          ? "bg-gray-300 cursor-not-allowed"
-          : "bg-white hover:bg-gray-100"
+          ? "bg-slate-300 cursor-not-allowed w-full"
+          : " w-full bg-white hover:bg-slate-100"
       }
-              bg-white text-black border border-gray-300 rounded-lg px-4 py-2 mt-4 hover:bg-gray-100 transition-colors`}
+              bg-white text-black border border-gray-300 px-4 py-2 mt-4  rounded-full transition-all duration-300 transform hover:scale-105`}
     >
       {isLoading ? (
         <>
-          <Loader2 className="animate-spin w-5 h-5" />
+          <Loader2 className="animate-spin" />
           <span>Inicia Sesión con Google...</span>
         </>
       ) : (

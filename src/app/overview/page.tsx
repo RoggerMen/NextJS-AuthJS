@@ -2,77 +2,104 @@ import { auth } from "@/auth"
 import { redirect } from "next/navigation"
 import prisma from "@/lib/prisma"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export default async function OverviewPage() {
   const session = await auth()
-  if (!session?.user) {
+  if (!session?.user?.email) {
     redirect('/login')
   }
 
-  const profile = await prisma.profile.findUnique({
-    where: { userId: session.user.id },
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profile: true },
   })
 
-  if (!profile) {
+  if (!user || !user.profile) {
     return (
-      <div className="max-w-4xl mx-auto mt-8">
-        <h1 className="text-2xl font-bold mb-4">Descripción general
-        </h1>
-        <p>Complete su perfil para ver una descripción general.</p>
+      <div className="max-w-4xl mx-auto mt-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Descripción general</h1>
+        <p className="mb-4 text-gray-600 dark:text-gray-300">Complete su perfil para ver una descripción general.</p>
+        <Link href="/profile">
+          <Button>Completar Perfil</Button>
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="max-w-4xl mx-auto mt-8">
-      <h1 className="text-2xl font-bold mb-4">Descripción general</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Descripción general</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>Carrera</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Nombre</CardTitle>
           </CardHeader>
-          <CardContent>{profile.career}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300"> {user.name || user.username} </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>Educación</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Email</CardTitle>
           </CardHeader>
-          <CardContent>{profile.education}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.email}</CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>Nivel de inglés</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Teléfono</CardTitle>
           </CardHeader>
-          <CardContent>{profile.englishLevel}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.phoneNumber || 'No especificado'}</CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>Salario deseado</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Carrera</CardTitle>
           </CardHeader>
-          <CardContent>${profile.salary}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.career || 'No especificado'}</CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>Años de experiencia</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Educación</CardTitle>
           </CardHeader>
-          <CardContent>{profile.experience}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.education || 'No especificado'}</CardContent>
         </Card>
-        <Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
-            <CardTitle>LinkedIn</CardTitle>
+            <CardTitle className="text-gray-800 dark:text-white">Nivel de inglés</CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.englishLevel || 'No especificado'}</CardContent>
+        </Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-gray-800 dark:text-white">Salario deseado</CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.salary ? `$${user.profile.salary}` : 'No especificado'}</CardContent>
+        </Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-gray-800 dark:text-white">Años de experiencia</CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.experience || 'No especificado'}</CardContent>
+        </Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-gray-800 dark:text-white">LinkedIn</CardTitle>
           </CardHeader>
           <CardContent>
-            <a href={
-        profile.linkedin?.startsWith("http")
-          ? profile.linkedin
-          : `https://${profile.linkedin}`
-      } target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              {profile.linkedin}
-            </a>
+            {user.profile.linkedin ? (
+              <a href={user.profile.linkedin.startsWith("http") ? user.profile.linkedin : `https://${user.profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                {user.profile.linkedin}
+              </a>
+            ) : (
+              <span className="text-gray-600 dark:text-gray-300">No especificado</span>
+            )}
           </CardContent>
         </Card>
+      </div>
+      <div className="mt-6">
+        <Link href="/profile">
+          <Button>Editar Perfil</Button>
+        </Link>
       </div>
     </div>
   )
 }
-

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,12 +14,17 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json({ error: "El correo ya existe" });
         }
 
-
         const user = await prisma.user.create({
             data: {
                 username,
                 email,
-                password
+                password,
+                profile: {
+                    create: {},
+                },
+            },
+            include: {
+                profile: true,
             },
         });
 
