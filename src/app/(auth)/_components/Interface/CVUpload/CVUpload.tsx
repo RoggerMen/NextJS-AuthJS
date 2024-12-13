@@ -82,24 +82,24 @@ export default function CVUpload() {
       {currentCV && (
         <Card>
           <CardHeader>
-            <CardTitle>Current CV</CardTitle>
+            <CardTitle>CV actual</CardTitle>
           </CardHeader>
           <CardContent>
             <a href={currentCV} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              View CV
+            Ver CV
             </a>
           </CardContent>
         </Card>
       )}
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 dark:text-white">
           <FormField
             control={form.control}
             name="file"
             render={({ field: { onChange, ...rest } }) => (
               <FormItem>
-                <FormLabel>Upload CV</FormLabel>
+                <FormLabel>Subir CV</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
@@ -117,7 +117,7 @@ export default function CVUpload() {
             )}
           />
 
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600">
             {isLoading ? 'Subiendo CV...' : 'Subir CV'}
           </Button>
         </form>

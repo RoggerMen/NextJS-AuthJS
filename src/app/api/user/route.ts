@@ -4,13 +4,13 @@ import prisma from "@/lib/prisma"
 
 export async function GET() {
   const session = await auth()
-  if (!session?.user) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
   }
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { email: session.user.email },
       select: {
         email: true,
         phoneNumber: true,
@@ -27,4 +27,3 @@ export async function GET() {
     return NextResponse.json({ error: "No se pudieron obtener los datos del usuario" }, { status: 500 })
   }
 }
-

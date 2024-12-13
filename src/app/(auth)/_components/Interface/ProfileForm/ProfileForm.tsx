@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -37,37 +37,25 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>
 
-export default function ProfileForm() {
+interface ProfileFormProps {
+  initialData?: Partial<ProfileFormData>;
+}
+
+export default function ProfileForm({ initialData }: ProfileFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      career: "",
-      education: "",
-      englishLevel: "",
-      salary: "",
-      experience: "",
-      linkedin: "",
+      career: initialData?.career || "",
+      education: initialData?.education || "",
+      englishLevel: initialData?.englishLevel || "",
+      salary: initialData?.salary || "",
+      experience: initialData?.experience || "",
+      linkedin: initialData?.linkedin || "",
     },
   })
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.get('/api/profile')
-        const profileData = response.data
-        Object.keys(profileData).forEach((key) => {
-          form.setValue(key as keyof ProfileFormData, profileData[key])
-        })
-      } catch (error) {
-        console.error('Failed to fetch profile:', error)
-      }
-    }
-
-    fetchProfile()
-  }, [form])
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true)
@@ -75,6 +63,7 @@ export default function ProfileForm() {
       await axios.post('/api/profile', data)
       toast.success('Perfil registrado exitosamente')
       router.push("/overview")
+      router.refresh()
     } catch (error) {
       console.error('No se pudo registrar el perfil:', error)
       toast.error('No se pudo registrar el perfil')
@@ -127,10 +116,10 @@ export default function ProfileForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="beginner">Principiante</SelectItem>
-                  <SelectItem value="intermediate">Intermedio</SelectItem>
-                  <SelectItem value="advanced">Avanzado</SelectItem>
-                  <SelectItem value="fluent">Fluido</SelectItem>
+                  <SelectItem value="Principiante">Principiante</SelectItem>
+                  <SelectItem value="Intermedio">Intermedio</SelectItem>
+                  <SelectItem value="Avanzado">Avanzado</SelectItem>
+                  <SelectItem value="Fluido">Fluido</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -181,8 +170,6 @@ export default function ProfileForm() {
             </FormItem>
           )}
         />
-
-        
 
         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600" disabled={isLoading}>
           {isLoading ? 'Registrando...' : 'Registrar perfil'}

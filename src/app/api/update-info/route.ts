@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { email: session.user.email! },
     })
 
     if (!user) {
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     }
 
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: user.id },
       data: updateData,
     })
 
@@ -51,3 +51,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No se pudo actualizar la configuración del Usuario" }, { status: 500 })
   }
 }
+

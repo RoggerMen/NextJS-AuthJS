@@ -14,6 +14,7 @@ import {
   Moon,
   HelpCircle,
   Bell,
+  Eye,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,10 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
       <Link href="/" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
         <Home className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
         <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Inicio</span>
+      </Link>
+      <Link href="/overview" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
+        <Eye className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+        <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Vista General</span>
       </Link>
       <Link href="/profile" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
         <User className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />

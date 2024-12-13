@@ -31,7 +31,7 @@ export default function Home() {
   if (session) {
     return (
       <main className="min-h-screen flex items-center justify-center p-4 bg-blue-600 dark:bg-gray-900">
-        <Card className="w-full max-w-md bg-white/10 dark:bg-gray-800/30 backdrop-blur-md shadow-xl">
+        <Card className="w-full max-w-md bg-blue-700 dark:bg-gray-800/30 backdrop-blur-md shadow-xl">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center text-gray-800 dark:text-white">
               Bienvenido, {session.user?.name}!

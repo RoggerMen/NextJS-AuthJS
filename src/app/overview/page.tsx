@@ -36,55 +36,55 @@ export default async function OverviewPage() {
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Nombre</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300"> {user.name || user.username} </CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.name || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Email</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.email}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.email}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Teléfono</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.phoneNumber || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.phoneNumber || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Carrera</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.career || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.profile.career || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Educación</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.education || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.profile.education || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Nivel de inglés</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.englishLevel || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.profile.englishLevel || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Salario deseado</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.salary ? `$${user.profile.salary}` : 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.profile.salary ? `$${user.profile.salary}` : 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Años de experiencia</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300">{user.profile.experience || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.profile.experience || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">LinkedIn</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="break-words">
             {user.profile.linkedin ? (
               <a href={user.profile.linkedin.startsWith("http") ? user.profile.linkedin : `https://${user.profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
                 {user.profile.linkedin}
@@ -94,12 +94,27 @@ export default async function OverviewPage() {
             )}
           </CardContent>
         </Card>
+        <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-gray-800 dark:text-white">CV</CardTitle>
+          </CardHeader>
+          <CardContent className="break-words">
+            {user.profile.cvUrl ? (
+              <a href={user.profile.cvUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                Ver CV
+              </a>
+            ) : (
+              <span className="text-gray-600 dark:text-gray-300">No subido</span>
+            )}
+          </CardContent>
+        </Card>
       </div>
       <div className="mt-6">
         <Link href="/profile">
-          <Button>Editar Perfil</Button>
+          <Button  className="w-full  dark:bg-blue-500 dark:hover:bg-blue-600" >Editar Perfil</Button>
         </Link>
       </div>
     </div>
   )
 }
+

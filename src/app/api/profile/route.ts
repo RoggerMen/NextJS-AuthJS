@@ -11,13 +11,28 @@ export async function POST(req: NextRequest) {
   const data = await req.json()
 
   try {
-    const updatedProfile = await prisma.profile.upsert({
-      where: { userId: session.user.id },
-      update: data,
-      create: { ...data, userId: session.user.id },
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email! },
+      include: { profile: true },
     })
 
-    return NextResponse.json(updatedProfile)
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    let profile
+    if (user.profile) {
+      profile = await prisma.profile.update({
+        where: { userId: user.id },
+        data: data,
+      })
+    } else {
+      profile = await prisma.profile.create({
+        data: { ...data, userId: user.id },
+      })
+    }
+
+    return NextResponse.json(profile)
   } catch (error) {
     console.error("No se pudo actualizar el perfil:", error)
     return NextResponse.json({ error: "No se pudo actualizar el perfil" }, { status: 500 })
@@ -31,17 +46,19 @@ export async function GET() {
   }
 
   try {
-    const profile = await prisma.profile.findUnique({
-      where: { userId: session.user.id },
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email! },
+      include: { profile: true },
     })
 
-    if (!profile) {
+    if (!user || !user.profile) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 })
     }
 
-    return NextResponse.json(profile)
+    return NextResponse.json(user.profile)
   } catch (error) {
     console.error("No se pudo obtener el perfil:", error)
     return NextResponse.json({ error: "No se pudo obtener el perfil" }, { status: 500 })
   }
 }
+

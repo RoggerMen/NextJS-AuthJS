@@ -1,12 +1,9 @@
-
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
 
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -44,36 +41,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user, account  }) {
-      // Si el usuario usa Google, registrar en la base de datos si es necesario
-      if (account?.provider === "google" && user) {
-
-        const email = user.email;
-
-        if (!email) {
-          throw new Error("El email del usuario no está definido.");
-        }
-
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
         const existingUser = await prisma.user.findUnique({
-          where: { email },
+          where: { email: user.email! },
         });
 
         if (!existingUser) {
-          // Crea un nuevo usuario con los datos de Google
-          await prisma.user.create({
+          const newUser = await prisma.user.create({
             data: {
               email: user.email!,
               name: user.name!,
               image: user.image || null,
             },
           });
+          await prisma.profile.create({
+            data: {
+              userId: newUser.id,
+            },
+          });
         }
       }
-      
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+      }
+      if (account) {
+        token.provider = account.provider;
       }
       return token;
     },
@@ -81,9 +79,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
-        session.user.name = token.name;
-         session.user.id = token.sub as string; // Incluye el ID del usuario.
-        session.provider = token.provider as string; // Incluye el proveedor.
+        session.user.name = token.name as string;
+        session.provider = token.provider as string;
       }
       return session;
     },

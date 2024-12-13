@@ -6,8 +6,8 @@ import path from 'path'
 
 export async function POST(req: NextRequest) {
   const session = await auth();
-  if (!session?.user || !session.user.id) {
-    return NextResponse.json({ error: "Not authenticated or user ID is missing" }, { status: 401 });
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Not authenticated or user email is missing" }, { status: 401 });
   }
 
   const formData = await req.formData();
@@ -25,11 +25,25 @@ export async function POST(req: NextRequest) {
   try {
     await writeFile(fullPath, buffer);
 
-     await prisma.profile.upsert({
-      where: { userId: session.user.id },
-      update: { cvUrl: relativePath },
-      create: { userId: session.user.id, cvUrl: relativePath },
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      include: { profile: true },
     });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (user.profile) {
+      await prisma.profile.update({
+        where: { userId: user.id },
+        data: { cvUrl: relativePath },
+      });
+    } else {
+      await prisma.profile.create({
+        data: { userId: user.id, cvUrl: relativePath },
+      });
+    }
 
     return NextResponse.json({ message: "File uploaded successfully", cvUrl: relativePath });
   } catch (error) {
@@ -37,3 +51,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
   }
 }
+
