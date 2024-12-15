@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { ChevronLeft, Loader2, Eye, EyeOff } from 'lucide-react';
 import toast from "react-hot-toast";
 import axios from "axios";
 import { signIn } from "next-auth/react";
@@ -36,6 +36,7 @@ interface Props {
 
 const AuthForm = ({ mode }: Props) => {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,6 +54,8 @@ const AuthForm = ({ mode }: Props) => {
 
         if (data.ok) {
           toast.success(data.message);
+          router.refresh();
+          router.push("/login");
         } else if (data.error) {
           toast.error(data.error);
         }
@@ -78,7 +81,6 @@ const AuthForm = ({ mode }: Props) => {
   };
 
   return (
-    /*//IMPORTAMOS EL COMPONENTE "form" DE SHADCN */
     <div className="w-full flex items-center justify-center flex-col gap-6">
       <div className="text-sm font-medium">
         <Link
@@ -95,15 +97,11 @@ const AuthForm = ({ mode }: Props) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full max-w-[380px] px-6 py-6 border border-zinc-300 rounded-md space-y-3 "
         >
-          <h2 className="font-mediun text-lg text-center">
-            {" "}
-            {mode === "register" ? "Registrate" : "Inicia Sesión"}{" "}
+          <h2 className="font-medium text-lg text-center">
+            {mode === "register" ? "Registrate" : "Inicia Sesión"}
           </h2>
 
           <div>
-            {/*RENDERIZAMOS TAMBIEN ESTE COMPONENTE DE FORMA CONDICIONAL
-                VAMOS A DECIR QUE SI EL "mode" es de "register"
-                RENDERIZAMOS ESTO DONDE ENCAPSULAMOS A EL COMPONENTE <FormField /> */}
             {mode === "register" && (
               <FormField
                 control={form.control}
@@ -145,11 +143,24 @@ const AuthForm = ({ mode }: Props) => {
                 <FormItem>
                   <FormLabel>Contraseña</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="******************"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="******************"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5" aria-hidden="true" />
+                        ) : (
+                          <Eye className="h-5 w-5" aria-hidden="true" />
+                        )}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -178,7 +189,6 @@ const AuthForm = ({ mode }: Props) => {
                   >
                     {mode === "register" ? "Registrar" : "Iniciar Sesión"}
                   </button>
-                  
                 </div>
               </>
             )}
@@ -201,7 +211,6 @@ const AuthForm = ({ mode }: Props) => {
           </>
         ) : (
           <>
-            
             <p>
               ¿Aún no tienes una cuenta?
               <Link
@@ -219,3 +228,4 @@ const AuthForm = ({ mode }: Props) => {
 };
 
 export default AuthForm;
+

@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
+import { sendWelcomeEmail } from "./lib/email";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -60,6 +61,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               userId: newUser.id,
             },
           });
+          
+          // Enviar correo de bienvenida para usuarios de Google
+          await sendWelcomeEmail(user.email!, user.name!);
         }
       }
       return true;
