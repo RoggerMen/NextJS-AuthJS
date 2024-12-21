@@ -13,7 +13,6 @@ import {
   Sun,
   Moon,
   HelpCircle,
-  Bell,
   Eye,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -177,10 +176,6 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
                   <DropdownMenuItem>
                     <User className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell className="mr-2 h-4 w-4" />
-                    <span>Notificaciones</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <HelpCircle className="mr-2 h-4 w-4" />

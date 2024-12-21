@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendWelcomeEmail(email: string, name: string) {
   try {
     const data = await resend.emails.send({
-      from: 'Your App <onboarding@yourdomain.com>',
+      from: 'Your App <onboarding@resend.dev>',
       to: email,
       subject: 'Bienvenido a nuestra aplicación',
       html: `
@@ -15,9 +15,9 @@ export async function sendWelcomeEmail(email: string, name: string) {
       `
     });
 
-    console.log('Email sent successfully:', data);
+    console.log('Email enviado satisfactoriamente:', data);
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('Error enviando Email:', error);
   }
 }
 

@@ -4,6 +4,13 @@ import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
 import { sendWelcomeEmail } from "./lib/email";
 
+// Extend the Session type
+declare module "next-auth" {
+  interface Session {
+    provider?: string; // Añade la propiedad `provider` al tipo Session
+  }
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
@@ -28,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        const isPasswordValid = await (credentials.password, user.password);
+        const isPasswordValid = credentials.password === user.password;
 
         if (!isPasswordValid) {
           return null;
