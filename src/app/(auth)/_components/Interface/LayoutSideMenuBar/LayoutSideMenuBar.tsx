@@ -3,18 +3,7 @@
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import {
-  Home,
-  User,
-  FileText,
-  Settings,
-  LogOut,
-  Menu,
-  Sun,
-  Moon,
-  HelpCircle,
-  Eye,
-} from "lucide-react";
+import { Home, User, FileText, Settings, LogOut, Menu, Sun, Moon, HelpCircle, Eye, Star } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -28,10 +17,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "react-hot-toast";
+
 
 const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
   const { data: session, status } = useSession();
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isRecruiter, setIsRecruiter] = useState(false); // Add state for recruiter role
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
@@ -64,14 +56,29 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
         <Eye className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
         <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Vista General</span>
       </Link>
-      <Link href="/profile" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
-        <User className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
-        <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl ">Perfil</span>
-      </Link>
-      <Link href="/CV" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
-        <FileText className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
-        <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">CV/Resumen</span>
-      </Link>
+      {isRecruiter ? (
+        <>
+          <Link href="/candidates" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            <User className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+            <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Candidatos</span>
+          </Link>
+          <Link href="/interested" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            <Star className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+            <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Interesantes</span>
+          </Link>
+        </>
+      ) : (
+        <>
+          <Link href="/profile" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            <User className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+            <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Perfil</span>
+          </Link>
+          <Link href="/CV" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
+            <FileText className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
+            <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">CV/Resumen</span>
+          </Link>
+        </>
+      )}
       <Link href="/update-info" className="flex items-center py-3 px-6 text-white hover:bg-blue-700 rounded-lg transition-colors duration-200">
         <Settings className="mr-3 md:mr-4 w-5 h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 xl:w-8 xl:h-8" />
         <span className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl 3xl:text-3xl">Configuración</span>
@@ -177,6 +184,7 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
                   </DropdownMenuItem>
+                  
                   <DropdownMenuItem>
                     <HelpCircle className="mr-2 h-4 w-4" />
                     <span>Ayuda</span>
@@ -189,6 +197,31 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
                         <span>Modo Oscuro</span>
                       </div>
                       <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <div className="flex items-center justify-between w-full">
+                      <span>Rol</span>
+                      <Switch checked={isRecruiter} onCheckedChange={async (checked) => {
+                        const newRole = checked ? 'reclutador' : 'postulante';
+                        try {
+                          const response = await fetch('/api/change-role', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ role: newRole }),
+                          });
+                          if (response.ok) {
+                            setIsRecruiter(checked);
+                            toast.success(`Rol cambiado a ${newRole}`);
+                          } else {
+                            toast.error('Error al cambiar el rol');
+                          }
+                        } catch (error) {
+                          console.error('Error al cambiar el rol:', error);
+                          toast.error('Error al cambiar el rol');
+                        }
+                      }} />
                     </div>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -212,3 +245,4 @@ const LayoutSideMenuBar = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default LayoutSideMenuBar;
+

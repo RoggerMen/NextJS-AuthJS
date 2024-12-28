@@ -9,7 +9,7 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            Int    @id @default(autoincrement())
   name          String?
   username      String?   @unique
   email         String    @unique
@@ -19,14 +19,17 @@ model User {
   phoneNumber   String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  role          String    @default("postulante")
   accounts      Account[]
   sessions      Session[]
   profile       Profile?
+  interestedIn  Candidate[] @relation("RecruiterInterest")
+  asCandidate   Candidate[] @relation("UserAsCandidate")
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  id            Int    @id @default(autoincrement())
+  userId            Int
   type              String
   provider          String
   providerAccountId String
@@ -45,9 +48,9 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id            Int    @id @default(autoincrement())
   sessionToken String   @unique
-  userId       String
+  userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -63,8 +66,8 @@ model VerificationToken {
 }
 
 model Profile {
-  id           String  @id @default(cuid())
-  userId       String  @unique
+  id            Int    @id @default(autoincrement())
+  userId       Int  @unique
   career       String?
   education    String?
   englishLevel String?
@@ -74,7 +77,20 @@ model Profile {
   cvUrl        String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 }
 
-
+model Candidate {
+  id            Int    @id @default(autoincrement())
+  userId       Int
+  recruiterId  Int
+  status       String   @default("interested")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  recruiter    User     @relation("RecruiterInterest", fields: [recruiterId], references: [id])
+  user         User     @relation("UserAsCandidate", fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([recruiterId])
+}
 

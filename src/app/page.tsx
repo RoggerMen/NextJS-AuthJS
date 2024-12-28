@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import GoogleSignInButton from "./(auth)/_components/AuthForm/GoogleSignInButton";
-import Modal from "./(auth)/_components/Interface/UI/modal";
+import Modal from "./(auth)/_components/Interface/UI/Modal/modal";
 import { LogOut, Shield } from 'lucide-react';
 
 export default function Home() {
