@@ -36,7 +36,7 @@ export default async function OverviewPage() {
           <CardHeader>
             <CardTitle className="text-gray-800 dark:text-white">Nombre</CardTitle>
           </CardHeader>
-          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.name || 'No especificado'}</CardContent>
+          <CardContent className="text-gray-600 dark:text-gray-300 break-words">{user.name || user.username || 'No especificado'}</CardContent>
         </Card>
         <Card className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <CardHeader>

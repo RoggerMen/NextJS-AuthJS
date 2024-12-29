@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useRouter } from 'next/navigation'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_FILE_TYPES = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
@@ -25,11 +26,11 @@ const ACCEPTED_FILE_TYPES = ["application/pdf", "application/msword", "applicati
 const cvSchema = z.object({
   file: z
     .instanceof(FileList)
-    .refine((files) => files.length > 0, "CV file is required.")
-    .refine((files) => files[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine((files) => files.length > 0, "Archivo CV es requerido.")
+    .refine((files) => files[0]?.size <= MAX_FILE_SIZE, `El tamaño máximo del archivo CV es 5MB.`)
     .refine(
       (files) => ACCEPTED_FILE_TYPES.includes(files[0]?.type),
-      "Only .pdf, .doc, and .docx files are accepted."
+      "Solo estos archivos son aceptados .pdf, .doc, and .docx."
     ),
 })
 
@@ -43,13 +44,15 @@ export default function CVUpload() {
     resolver: zodResolver(cvSchema),
   })
 
+  const router = useRouter();
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get('/api/profile')
         setCurrentCV(response.data.cvUrl)
       } catch (error) {
-        console.error('Failed to fetch profile:', error)
+        console.error('Fallo al buscar perfil', error)
       }
     }
 
@@ -68,10 +71,11 @@ export default function CVUpload() {
         },
       })
       setCurrentCV(response.data.cvUrl)
-      toast.success('CV uploaded successfully')
+      toast.success('El CV cargo Satisfactoriamente')
+      router.refresh()
     } catch (error) {
-      console.error('Failed to upload CV:', error)
-      toast.error('Failed to upload CV')
+      console.error('Falló al cargar el CV:', error)
+      toast.error('Falló al cargar el CV')
     } finally {
       setIsLoading(false)
     }

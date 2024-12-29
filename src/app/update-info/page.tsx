@@ -22,18 +22,18 @@ import {
 import { Eye, EyeOff } from 'lucide-react'
 
 const baseSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Dirección de correo electrónico no válida"),
+  phoneNumber: z.string().min(1, "Se requiere el número de teléfono"),
 });
 
-const passwordSchema = z.object({
-  currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z.string().min(5, "Password must be at least 5 characters"),
-  confirmNewPassword: z.string().min(5, "Password must be at least 5 characters"),
-}).refine((data) => data.newPassword === data.confirmNewPassword, {
-  message: "Passwords don't match",
-  path: ["confirmNewPassword"],
-});
+// const passwordSchema = z.object({
+//   currentPassword: z.string().min(1, "Current password is required"),
+//   newPassword: z.string().min(5, "Password must be at least 5 characters"),
+//   confirmNewPassword: z.string().min(5, "Password must be at least 5 characters"),
+// }).refine((data) => data.newPassword === data.confirmNewPassword, {
+//   message: "Las contraseñas no coinciden",
+//   path: ["confirmNewPassword"],
+// });
 
 const schema = baseSchema.extend({
   currentPassword: z.string().optional(),
@@ -44,7 +44,7 @@ const schema = baseSchema.extend({
   const passwordFieldsFilled = [data.currentPassword, data.newPassword, data.confirmNewPassword].filter(Boolean).length;
   return passwordFieldsFilled === 0 || passwordFieldsFilled === 3;
 }, {
-  message: "All password fields must be filled to change password",
+  message: "Todos los campos de contraseña deben completarse para cambiar la contraseña.",
   path: ["newPassword"],
 }).refine((data) => {
   // Si se están llenando los campos de contraseña, asegúrate de que coincidan
@@ -53,7 +53,7 @@ const schema = baseSchema.extend({
   }
   return true;
 }, {
-  message: "New passwords do not match",
+  message: "Las nuevas contraseñas no coinciden",
   path: ["confirmNewPassword"],
 });
 
@@ -95,7 +95,7 @@ export default function UpdateInfoPage() {
           form.setValue('email', userData.email)
           form.setValue('phoneNumber', userData.phoneNumber || '')
         } catch (error) {
-          console.error('Failed to fetch user data:', error)
+          console.error('No se pudieron obtener los datos del usuario:', error)
           if (error instanceof AxiosError) {
             toast.error(`No se pudieron cargar los datos del usuario: ${error.response?.data?.error || error.message}`)
           } else {
@@ -119,7 +119,7 @@ export default function UpdateInfoPage() {
 
       if (data.currentPassword && data.newPassword && data.confirmNewPassword) {
         if (data.newPassword !== data.confirmNewPassword) {
-          toast.error('New passwords do not match');
+          toast.error('Las nuevas contraseñas no coinciden');
           setIsLoading(false);
           return;
         }
@@ -129,6 +129,7 @@ export default function UpdateInfoPage() {
 
       await axios.post('/api/update-info', updateData)
       toast.success('Información actualizada exitosamente')
+      router.refresh()
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.error || 'No se pudo actualizar la información');
