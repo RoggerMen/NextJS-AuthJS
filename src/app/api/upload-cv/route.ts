@@ -7,14 +7,14 @@ import path from 'path'
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.email) {
-    return NextResponse.json({ error: "Not authenticated or user email is missing" }, { status: 401 });
+    return NextResponse.json({ error: "No autenticado o falta el correo electrónico del usuario" }, { status: 401 });
   }
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
 
   if (!file) {
-    return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
+    return NextResponse.json({ error: "No se ha subido ningún archivo" }, { status: 400 });
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
     }
 
     if (user.profile) {
@@ -45,10 +45,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ message: "File uploaded successfully", cvUrl: relativePath });
+    return NextResponse.json({ message: "Archivo cargado exitosamente", cvUrl: relativePath });
   } catch (error) {
-    console.error("Error uploading file:", error);
-    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
+    console.error("Error al cargar el archivo:", error);
+    return NextResponse.json({ error: "Error al cargar el archivo" }, { status: 500 });
   }
 }
 
