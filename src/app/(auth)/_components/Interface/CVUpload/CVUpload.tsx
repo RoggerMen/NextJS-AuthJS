@@ -89,6 +89,7 @@ export default function CVUpload() {
             <CardTitle>CV actual</CardTitle>
           </CardHeader>
           <CardContent>
+          <iframe src={currentCV} width="100%" height="600px" />
             <a href={currentCV} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
             Ver CV
             </a>
