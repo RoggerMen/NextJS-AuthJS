@@ -8,6 +8,11 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum Role {
+  user 
+  admin
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -22,6 +27,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   profile       Profile?
+  role          Role      @default(user)
 }
 
 model Account {
@@ -39,6 +45,9 @@ model Account {
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -59,7 +68,7 @@ model VerificationToken {
   token      String   @unique
   expires    DateTime
 
-  @@unique([identifier, token])
+  @@unique([identifier])
 }
 
 model Profile {

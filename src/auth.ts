@@ -1,4 +1,5 @@
-import NextAuth from "next-auth";
+import NextAuth, { DefaultSession } from "next-auth";
+import "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "./lib/prisma";
@@ -8,6 +9,18 @@ import { sendWelcomeEmail } from "./lib/email";
 declare module "next-auth" {
   interface Session {
     provider?: string; // Añade la propiedad `provider` al tipo Session
+    user:{
+      role?: string;
+    } & DefaultSession["user"];
+  }
+  interface User {
+    role?: string;
+  }
+}
+
+declare module "next-auth/jwt"{
+  interface JWT {
+    role?: string;
   }
 }
 
@@ -41,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        return { id: user.id, email: user.email, name: user.username };
+        return { id: user.id, email: user.email, name: user.username, role: user.role };
       },
     }),
   ],
@@ -80,6 +93,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
+        token.role = user.role;
       }
       if (account) {
         token.provider = account.provider;
@@ -92,6 +106,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.provider = token.provider as string;
+        session.user.role = token.role; // Añade el campo `role` al objeto `session.user`
       }
       return session;
     },
