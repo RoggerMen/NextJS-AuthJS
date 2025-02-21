@@ -38,8 +38,8 @@ export default auth(async(req) =>{
 
     // ESTO ES PARA PROTEGER LA RUTA PROTEGIDA CUANDO EL USUARIO AUN NO INICIO SESION Y QUIERE VULNERAR COLOCANDO UNA RUTA QUE SOLO USUARIOS AUTENTICADOS PUEDEN ENTRAR A VER EL CONTENIDO DE ESA PAGINA
 
-    // LE DECIMOS QUE SI LA "session" NO EXISTE Y LA RUTA ES "/protected" 
-    if(!session && pathname === "/protected"){
+    // LE DECIMOS QUE SI LA "session" NO EXISTE Y LA RUTA ES "/admin" 
+    if(!session && pathname === "/admin"){
         //QUIERO QUE NO ME DEJES ENTRAR Y QUE LO REDIRIJAS A UNA NUEVA "url" QUE VA A SER "/login"
         return NextResponse.redirect(new URL("/login", req.url));
     } else if (!session && pathname === "/overview/edit"){

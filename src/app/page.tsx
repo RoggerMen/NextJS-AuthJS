@@ -42,7 +42,7 @@ export default function Home() {
               Has iniciado sesión correctamente en nuestra plataforma.
             </p>
             <div className="space-y-4">
-              <Link href="/protected" passHref>
+              <Link href="/admin" passHref>
                 <Button className="w-full bg-lime-500 hover:bg-lime-600 dark:bg-lime-600 dark:hover:bg-lime-700 text-black dark:text-white">
                   <Shield className="mr-2 h-4 w-4" /> Ir Tenmás XYZ
                 </Button>

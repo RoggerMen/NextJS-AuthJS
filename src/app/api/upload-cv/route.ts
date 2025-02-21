@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
+<<<<<<< HEAD
     return NextResponse.json({
       message: "Archivo cargado exitosamente",
       cvUrl: fileUrl,
@@ -105,5 +106,11 @@ export async function POST(req: NextRequest) {
       { error: "Error al subir archivo" },
       { status: 500 }
     );
+=======
+    return NextResponse.json({ message: "Archivo cargado exitosamente", cvUrl: relativePath });
+  } catch (error) {
+    console.error("Error al cargar el archivo:", error);
+    return NextResponse.json({ error: "Error al cargar el archivo:" }, { status: 500 });
+>>>>>>> interface
   }
 }
